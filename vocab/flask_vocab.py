@@ -98,6 +98,8 @@ def check():
     # Is it good?
     in_jumble = LetterBag(jumble).contains(text)
     matched = WORDS.has(text)
+    # matched should be call from Vocab
+    #matched = Vocab
 
     # Respond appropriately
     if matched and in_jumble and not (text in matches):
@@ -108,15 +110,17 @@ def check():
         # count the number of success, if the lenght is >= 2(target_count), pass to the html.
         # join_matches: if not in matches: true; else: false; in_WORDS(mached):in:True, not in False;
         # in_jumble: in: True, not in False;
-        rslt = {"join_matches": len(matches) >= ["target_count"],
-                "in_WORDS":True, "in_jumble":True}
+        if len(matches) >= flask.session["target_count"]:
+            rslt = {"join_matches": False, "in_WORDS":True, "in_jumble":True}
+        else:
+            rslt = {"join_matches": True, "in_WORDS":True, "in_jumble":True}
         
     elif text in matches:
         flask.flash("You already found {}".format(text))  #Words in matches
         rslt = {"joinin_matches": False, "in_WORDS": True, "in_jumble": True} 
     elif not matched:
         flask.flash("{} isn't in the list of words".format(text))   #Words in WORDS?
-        rslt = "join_matches": True, "in_WORDS": False, "in_jumble": True}
+        rslt = {"join_matches": True, "in_WORDS": False, "in_jumble": True}
     elif not in_jumble:
         flask.flash(
             '"{}" can\'t be made from the letters {}'.format(text, jumble))
@@ -127,13 +131,7 @@ def check():
         rslt = {"join_matches":False, "in_WORDS": False, "in_jumble": False}
     return flask.jsonify(result=rslt)
 
-    ''' Replaced with line 111: test whether the len(matches) is fit for the requirement.
-    # Choose page:  Solved enough, or keep going?
-    if len(matches) >= flask.session["target_count"]:
-       return flask.redirect(flask.url_for("success"))
-    else:
-       return flask.redirect(flask.url_for("keep_going"))
-    '''
+
     # Q: Where to use jumble.py(create anagram) and Vocab.py(determine whether the word is in WORDS?
 
 ###############
