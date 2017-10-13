@@ -25,6 +25,7 @@ def jumbled(word_list, n):
        result should be the smallest jumble with this property
        (i.e., duplicates between words have been removed).
     """
+    # Create the anagram 
     selected = random.sample(word_list, n)
     bag = LetterBag("")
     for word in selected:

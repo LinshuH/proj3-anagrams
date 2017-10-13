@@ -84,13 +84,17 @@ def check():
     made only from the jumble letters, and not a word they
     already found.
     """
+    # 3 things to check: 1, in_jumble: letter from anagram? 2, mached: input word in WORDS?
+    # 3, matches: input already been tested before?
     app.logger.debug("Entering check")
 
     # The data we need, from form and from cookie
-    text = flask.request.form["attempt"]
+    text = flask.request.args.get("text", type=str) # get the user input
+    ## text = flask.request.form["attempt"]
     jumble = flask.session["jumble"]
     matches = flask.session.get("matches", [])  # Default to empty list
-
+    
+    
     # Is it good?
     in_jumble = LetterBag(jumble).contains(text)
     matched = WORDS.has(text)
@@ -100,22 +104,37 @@ def check():
         # Cool, they found a new word
         matches.append(text)
         flask.session["matches"] = matches
+        #JSON Code:
+        # count the number of success, if the lenght is >= 2(target_count), pass to the html.
+        # join_matches: if not in matches: true; else: false; in_WORDS(mached):in:True, not in False;
+        # in_jumble: in: True, not in False;
+        rslt = {"join_matches": len(matches) >= ["target_count"],
+                "in_WORDS":True, "in_jumble":True}
+        
     elif text in matches:
-        flask.flash("You already found {}".format(text))
+        flask.flash("You already found {}".format(text))  #Words in matches
+        rslt = {"joinin_matches": False, "in_WORDS": True, "in_jumble": True} 
     elif not matched:
-        flask.flash("{} isn't in the list of words".format(text))
+        flask.flash("{} isn't in the list of words".format(text))   #Words in WORDS?
+        rslt = "join_matches": True, "in_WORDS": False, "in_jumble": True}
     elif not in_jumble:
         flask.flash(
             '"{}" can\'t be made from the letters {}'.format(text, jumble))
+        rslt = {"join_matches":True, "in_WORDS": True, "in_jumble": False}
     else:
         app.logger.debug("This case shouldn't happen!")
         assert False  # Raises AssertionError
+        rslt = {"join_matches":False, "in_WORDS": False, "in_jumble": False}
+    return flask.jsonify(result=rslt)
 
+    ''' Replaced with line 111: test whether the len(matches) is fit for the requirement.
     # Choose page:  Solved enough, or keep going?
     if len(matches) >= flask.session["target_count"]:
        return flask.redirect(flask.url_for("success"))
     else:
        return flask.redirect(flask.url_for("keep_going"))
+    '''
+    # Q: Where to use jumble.py(create anagram) and Vocab.py(determine whether the word is in WORDS?
 
 ###############
 # AJAX request handlers
