@@ -81,12 +81,12 @@
 
 <div class="row">
   <div class="col-xs-6 text-center">
-  <form id="entry" method="POST" action="/_check"> 
-	<!--##call the function /_check in the py file--> 
+  
+<!--##call the function /_check in the py file--> 
     <label for="attempt">Word:</label>
     <input id="attempt" name="attempt" type="text" width="15"
       autocomplete="off"  autofocus />
-  </form>
+
 </div></div>
 
 <br />
@@ -114,56 +114,32 @@ $("#attempt").keyup(function(event) {
 
    //few cases: only rsval, matched, and jumble are both correct
    $.getJSON( "/_check", { text: txt }, 
-              function(data) {
+      function(data) {
                 rsval = data.result.join_matches;
-		            matched = data.result.in_WORDS;
-		            jumble = data.result.in_jumble;
+		matched = data.result.in_WORDS;
+		jumble = data.result.in_jumble;
+		input = data.result.input;
 
                 console.log("rsval: " + rsval)
-		            console.log("matched: " + matched)
-		            console.log("jumble: " + jumble)
-                if (!rsval && matched && jumble) {
-                  $("#response").html("That's enough!");
+		console.log("matched: " + matched)
+		console.log("jumble: " + jumble)
+		if (rsval && matched && jumble) {
+		  $("#response").append(input + " ");
                   $("#attempt").val("");
-                } 
-                else if (rsval && !matched && jumble) {
-                   $("#response").html("Input word is not in the word list!");
-                }
-                else if (rsv && matched && !jumble) {
-                   $("#response").html("Input characters are not in anagram");
-                }
-                else {
-                   $("#response").append(txt.length + " ");
 		}
-               }
-           );
-   });
+                if (!rsval && matched && jumble) {
+                  window.location.replace("/success");
+                  
+                } 
+		console.log(input);
+      }
+   );
+});
 
 
-
-
-
-/*
-{% if session.matches|length is not equalto 0  %}
-<h2>You found </h2>
-<p id="results">
-  {% for match in session.matches %}
-  {{ match }} 
-  {% endfor %}
-</p>
-{% endif %}
-
-
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <!-- Mismatch, already found, etc. "flashed" from Python -->
-    {% for message in messages %}
-      <p class="message">{{ message }}</p>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
-*/
-
- </div> <!-- container -->
-</body> </html>
 </script>
+
+
+</div> <!-- container -->
+</body> </html>
+

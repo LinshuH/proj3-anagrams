@@ -74,7 +74,7 @@ def success():
 #######################
 
 
-@app.route("/_check", methods=["POST"])
+@app.route("/_check")
 def check():
     """
     User has submitted the form with a word ('attempt')
@@ -110,6 +110,7 @@ def check():
         # count the number of success, if the lenght is >= 2(target_count), pass to the html.
         # join_matches: if not in matches: true; else: false; in_WORDS(mached):in:True, not in False;
         # in_jumble: in: True, not in False;
+        # variable here: join_matches is equal to False
         if len(matches) >= flask.session["target_count"]:
             rslt = {"join_matches": False, "in_WORDS":True, "in_jumble":True}
         else:
@@ -129,6 +130,7 @@ def check():
         app.logger.debug("This case shouldn't happen!")
         assert False  # Raises AssertionError
         rslt = {"join_matches":False, "in_WORDS": False, "in_jumble": False}
+    rslt["input"] = text
     return flask.jsonify(result=rslt)
 
 
