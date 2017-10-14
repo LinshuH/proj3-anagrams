@@ -122,7 +122,7 @@ $("#attempt").keyup(function(event) {
 		console.log("matched: " + matched)
 		console.log("jumble: " + jumble)
 		if (rsval && matched && jumble) {
-		  $("#response").append(input + " ");
+		  $("#response").append(input + "   ");
                   $("#attempt").val("");
 		}
                 if (!rsval && matched && jumble) {
